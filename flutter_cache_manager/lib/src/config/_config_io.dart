@@ -40,7 +40,7 @@ class Config implements def.Config {
 
   static CacheInfoRepository _createRepo(String key) {
     if (Platform.isAndroid || Platform.isIOS || Platform.isMacOS) {
-      return CacheObjectProvider(databaseName: key);
+      return HiveCacheObjectProvider(databaseName: key);
     }
     return JsonCacheInfoRepository(databaseName: key);
   }
