@@ -6,7 +6,7 @@ import '../cache_object.dart';
 import 'cache_info_repository.dart';
 
 class HiveCacheObjectProvider extends CacheInfoRepository with CacheInfoRepositoryHelperMethods {
-  Box<Map<String, dynamic>>? db;
+  Box<Map<dynamic, dynamic>>? db;
   final String? _path;
   String databaseName;
 
@@ -25,7 +25,7 @@ class HiveCacheObjectProvider extends CacheInfoRepository with CacheInfoReposito
       return openCompleter!.future;
     }
     var path = await _getPath();
-    db = await Hive.openBox<Map<String, dynamic>>(databaseName, path: path);
+    db = await Hive.openBox<Map<dynamic, dynamic>>(databaseName, path: path);
     return opened();
   }
 
@@ -51,9 +51,9 @@ class HiveCacheObjectProvider extends CacheInfoRepository with CacheInfoReposito
   @override
   Future<CacheObject?> get(String key) async {
     final id = key.hashCode;
-    Map<String, dynamic>? map = db!.get(id);
+    Map<dynamic, dynamic>? map = db!.get(id);
     if (map != null) {
-      return CacheObject.fromMap(map);
+      return CacheObject.fromMap(Map<String, dynamic>.from(map));
     }
     return null;
   }
@@ -85,7 +85,7 @@ class HiveCacheObjectProvider extends CacheInfoRepository with CacheInfoReposito
   @override
   Future<List<CacheObject>> getAllObjects() async {
     return CacheObject.fromMapList(
-      db!.values.toList(),
+      db!.values.map((e) => Map<String, dynamic>.from(e)).toList(),
     );
   }
 
@@ -94,7 +94,13 @@ class HiveCacheObjectProvider extends CacheInfoRepository with CacheInfoReposito
     final list = db!.values.toList()
       ..sort((a, b) =>
           b[CacheObject.columnTouched] - a[CacheObject.columnTouched]); // from large to small
-    final oldest100 = list.skip(capacity).toList().reversed.take(100).toList();
+    final oldest100 = list
+        .skip(capacity)
+        .toList()
+        .reversed
+        .take(100)
+        .map((e) => Map<String, dynamic>.from(e))
+        .toList();
     return CacheObject.fromMapList(oldest100);
   }
 
@@ -105,6 +111,7 @@ class HiveCacheObjectProvider extends CacheInfoRepository with CacheInfoReposito
             item[CacheObject.columnTouched] <
             DateTime.now().subtract(maxAge).millisecondsSinceEpoch)
         .take(100)
+        .map((e) => Map<String, dynamic>.from(e))
         .toList();
     return CacheObject.fromMapList(list);
   }
