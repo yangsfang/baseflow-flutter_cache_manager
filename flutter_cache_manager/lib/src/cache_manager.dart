@@ -16,8 +16,6 @@ import 'package:uuid/uuid.dart';
 /// Basic cache manager implementation, which should be used as a single
 /// instance.
 class CacheManager implements BaseCacheManager {
-  static CacheManagerLogLevel logLevel = CacheManagerLogLevel.none;
-
   /// Creates a new instance of a cache manager. This can be used to retrieve
   /// files from the cache or download them online. The http headers are used
   /// for the maximum age of the files. The BaseCacheManager should only be
@@ -125,9 +123,7 @@ class CacheManager implements BaseCacheManager {
         withProgress = false;
       }
     } catch (e) {
-      cacheLogger.log(
-          'CacheManager: Failed to load cached file for $url with error:\n$e',
-          CacheManagerLogLevel.debug);
+      cacheLogger.debug('CacheManager: Failed to load cached file for $url with error:\n$e');
     }
     if (cacheFile == null || cacheFile.validTill.isBefore(DateTime.now())) {
       try {
@@ -141,9 +137,7 @@ class CacheManager implements BaseCacheManager {
           }
         }
       } catch (e) {
-        cacheLogger.log(
-            'CacheManager: Failed to download file from $url with error:\n$e',
-            CacheManagerLogLevel.debug);
+        cacheLogger.debug('CacheManager: Failed to download file from $url with error:\n$e');
         if (cacheFile == null && streamController.hasListener) {
           streamController.addError(e);
         }
@@ -156,7 +150,7 @@ class CacheManager implements BaseCacheManager {
   @override
   Future<FileInfo> downloadFile(String url,
       {String? key,
-      Map<String, String>? authHeaders,
+    Map<String, String>? authHeaders,
       bool force = false}) async {
     key ??= url;
     var fileResponse = await _webHelper

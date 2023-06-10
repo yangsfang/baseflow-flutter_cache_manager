@@ -3,6 +3,7 @@ import 'package:example/plugin_example/download_page.dart';
 import 'package:example/plugin_example/floating_action_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:logging/logging.dart';
 
 void main() {
   runApp(BaseflowPluginExample(
@@ -11,7 +12,10 @@ void main() {
     pubDevURL: 'https://pub.dev/packages/flutter_cache_manager',
     pages: [CacheManagerPage.createPage()],
   ));
-  CacheManager.logLevel = CacheManagerLogLevel.verbose;
+  Logger.root.level = Level.FINE;
+  cacheLogger.onRecord.listen((record) {
+    debugPrint('${record.level.name}: ${record.time}: ${record.message}');
+  });
 }
 
 const url = 'https://blurha.sh/assets/images/img1.jpg';
@@ -66,11 +70,9 @@ class _CacheManagerPageState extends State<CacheManagerPage> {
 
   void _removeFile() {
     DefaultCacheManager().removeFile(url).then((value) {
-      //ignore: avoid_print
-      print('File removed');
+      Logger.root.info('File removed');
     }).onError((dynamic error, stackTrace) {
-      //ignore: avoid_print
-      print(error);
+      Logger.root.error(error);
     });
     setState(() {
       fileStream = null;

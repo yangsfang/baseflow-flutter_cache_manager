@@ -1,24 +1,18 @@
-import '../flutter_cache_manager.dart';
+import 'package:logging/logging.dart';
 
 /// Instance of the cache manager. Can be set to a custom one if preferred.
-CacheLogger cacheLogger = CacheLogger();
+Logger cacheLogger = Logger('cacheLogger');
 
-/// Log levels of the cache manager. Debug shows failed downloads and verbose
-/// also shows successful downloads and cache retrievals.
-enum CacheManagerLogLevel {
-  none,
-  warning,
-  debug,
-  verbose,
-}
+extension ConventionalLogger on Logger {
+  void debug(Object? message, [Object? error, StackTrace? stackTrace]) =>
+      config(message, error, stackTrace);
 
-/// [CacheLogger] which is used by the cache manager to log useful information
-class CacheLogger {
-  /// Function to log a message on a certain loglevel
-  void log(String message, CacheManagerLogLevel level) {
-    if (CacheManager.logLevel.index >= level.index) {
-      // ignore: avoid_print
-      print(message);
-    }
-  }
+  void verbose(Object? message, [Object? error, StackTrace? stackTrace]) =>
+      fine(message, error, stackTrace);
+
+  void error(Object? message, [Object? error, StackTrace? stackTrace]) =>
+      severe(message, error, stackTrace);
+
+  void fatal(Object? message, [Object? error, StackTrace? stackTrace]) =>
+      shout(message, error, stackTrace);
 }

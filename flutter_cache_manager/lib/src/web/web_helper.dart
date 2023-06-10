@@ -32,7 +32,7 @@ class WebHelper {
   ///Download the file from the url
   Stream<FileResponse> downloadFile(String url,
       {String? key,
-      Map<String, String>? authHeaders,
+    Map<String, String>? authHeaders,
       bool ignoreMemCache = false}) {
     key ??= url;
     var subject = _memCache[key];
@@ -55,8 +55,7 @@ class WebHelper {
       _queue.add(QueueItem(url, key, authHeaders));
       return;
     }
-    cacheLogger.log(
-        'CacheManager: Downloading $url', CacheManagerLogLevel.verbose);
+    cacheLogger.verbose('CacheManager: Downloading $url');
 
     concurrentCalls++;
     var subject = _memCache[key]!;
@@ -186,8 +185,8 @@ class WebHelper {
   }
 
   Future _saveFileAndPostUpdates(
-      StreamController<int> receivedBytesResultController,
-      CacheObject cacheObject,
+    StreamController<int> receivedBytesResultController,
+    CacheObject cacheObject,
       FileServiceResponse response) async {
     final file = await _store.fileSystem.createFile(cacheObject.relativePath);
 

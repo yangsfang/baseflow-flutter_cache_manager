@@ -38,8 +38,7 @@ class CacheStore {
       return null;
     }
     final file = await fileSystem.createFile(cacheObject.relativePath);
-    cacheLogger.log(
-        'CacheManager: Loaded $key from cache', CacheManagerLogLevel.verbose);
+    cacheLogger.verbose('CacheManager: Loaded $key from cache');
 
     return FileInfo(
       file,
